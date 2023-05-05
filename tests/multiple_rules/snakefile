@@ -1,0 +1,31 @@
+configfile: "config.yaml"
+
+rule all:
+    input: ".local/intersecting-city-regions"
+
+rule intersection:
+    input: ".local/buffered-cities"
+    output: ".local/intersecting-city-regions"
+    params:
+        script="scripts/get_intersections.py",
+    wrapper:
+        "file:../../geemake/"
+
+rule subset_cities:
+    input: ".local/canadian-cities"
+    output: ".local/canadian-cities-subset"
+    params:
+        script="scripts/split_cities.py",
+    wrapper:
+        "file:../../geemake/"
+
+rule buffer_cities:
+    input: ".local/canadian-cities-subset"
+    output: ".local/buffered-cities"
+    params:
+        script="scripts/buffer_cities.py",
+    wrapper:
+        "file:../../geemake/"
+
+from geemake import geemake
+geemake.initialize(list(workflow.rules), config)

@@ -1,0 +1,12 @@
+configfile: "config.yaml"
+
+rule all:
+    input: ".local/canadian-cities"
+    output: ".local/output"
+    params:
+        script="single_rule.py",
+    wrapper:
+        "file:../../geemake/"
+
+from geemake import geemake
+geemake.initialize(list(workflow.rules), config)
