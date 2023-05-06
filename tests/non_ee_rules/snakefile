@@ -1,0 +1,28 @@
+import numpy as np
+import pandas as pd
+
+rule all:
+    input: "output.csv"
+
+rule final:
+    input: "intermediate.csv"
+    output: "output.csv"
+    run:
+       df = pd.read_csv(input[0])
+       df['output'] = df['A'] + df['B']
+       df.to_csv(output[0], index=False)
+
+rule intermediate:
+    input: "input.csv"
+    output: "intermediate.csv"
+    run:
+        df = pd.read_csv(input[0])
+        df['B'] = df['A'] ** 2
+        df.to_csv(output[0], index=False)
+
+rule first:
+    input: []
+    output: "input.csv"
+    run:
+        df = pd.DataFrame({'A': np.arange(100)})
+        df.to_csv(output[0], index=False)
