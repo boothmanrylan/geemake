@@ -119,6 +119,11 @@ def initialize(rules, config):
     Returns:
         None
     """
+    if 'local_prefix' not in config and 'ee_prefix' not in config:
+        # assume there are no earth engine rules
+        # therefore there is nothing to do
+        return
+
     all_inputs = set()
     all_outputs = set()
     for rule in rules:
@@ -136,16 +141,22 @@ def initialize(rules, config):
             if not config['local_prefix'] in file:
                 continue  # not an ee rule
 
-            asset = file.replace(config['local_prefix'], config['ee_prefix'])
-
             try:
-                asset_info = ee.data.getAsset(asset)
-            except ee.EEException:
+                asset = utils.check_update_time(file)
+                if asset is not None:
+                    utils.write_update_time(asset, file)
+            except ee.EEException:  # no remote copy, has a local copy
                 if file in true_inputs:
                     raise ValueError(
                         f'EE asset {asset} for {file} does not exist '
                         f'and is not created by a rule.'
                     )
-
-            if not os.path.isfile(file):
+                elif os.path.isfile(file):
+                    # remove local copy, forces snakemake to reate remote copy
+                    os.remove(file)
+            except FileNotFoundError:  # no local copy, possibly a remote copy
+                asset = file.replace(
+                    config['local_prefix'],
+                    config['ee_prefix']
+                )
                 utils.write_update_time(asset, file)

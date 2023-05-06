@@ -9,7 +9,6 @@ import geemap
 
 geemap.ee_initialize()
 
-from geemake import geemake
 from geemake import utils
 
 OUTPUT = 'users/boothmanrylan/geemake-tests/output'
@@ -29,7 +28,7 @@ def change_dir(request, monkeypatch):
 
 
 def test_run():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     ee_output_asset = ee.FeatureCollection(OUTPUT)
 
@@ -41,7 +40,7 @@ def test_run():
 
 
 def test_rerun():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     with open('.local/output', 'r') as f:
         lines = f.readlines()
@@ -53,7 +52,7 @@ def test_rerun():
 
     time.sleep(10)
 
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     with open('.local/output', 'r') as f:
         lines = f.readlines()

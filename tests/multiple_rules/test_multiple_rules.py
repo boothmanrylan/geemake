@@ -56,7 +56,7 @@ def get_update_times():
 
 
 def test_run():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     asset1 = ee.FeatureCollection(SUBSET_OUTPUT)
     asset2 = ee.FeatureCollection(BUFFER_OUTPUT)
@@ -70,12 +70,12 @@ def test_run():
 
 
 def test_rerun():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     new_update_times = get_update_times()
 
     local_times_match_remote_times = sum([
@@ -101,14 +101,14 @@ def test_rerun():
 
 
 def test_rerun_after_local_modification():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
     os.remove(SUBSET_OUTPUT.replace(EE_PREFIX, LOCAL_PREFIX))
-    subprocess.run(["geemake", "subset_cities"], check=True, capture_output=True)
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1", "subset_cities"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     new_update_times = get_update_times()
 
     local_times_match_remote_times = sum([
@@ -134,14 +134,14 @@ def test_rerun_after_local_modification():
 
 
 def test_rerun_after_remote_modification1():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
     ee.data.deleteAsset(SUBSET_OUTPUT)
-    subprocess.run(["geemake", "subset_cities"], check=True, capture_output=True)
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1", "subset_cities"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     new_update_times = get_update_times()
 
     local_times_match_remote_times = sum([
@@ -167,14 +167,14 @@ def test_rerun_after_remote_modification1():
 
 
 def test_rerun_after_remote_modification2():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
     ee.data.deleteAsset(INTERSECTION_OUTPUT)
-    subprocess.run(["geemake", "intersection"], check=True, capture_output=True)
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1", "intersection"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     new_update_times = get_update_times()
 
     local_times_match_remote_times = sum([
@@ -204,12 +204,12 @@ def test_rerun_after_remote_modification2():
 
 
 def test_forced_rerun():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
-    subprocess.run(["geemake", "--forceall"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1", "--forceall"], check=True, capture_output=True)
     new_update_times = get_update_times()
 
     local_times_match_remote_times = sum([
@@ -235,13 +235,13 @@ def test_forced_rerun():
 
 
 def test_forced_partial_rerun():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
     update_times = get_update_times()
 
     time.sleep(10)
 
     subprocess.run(
-        ["geemake", "-f", "intersection"],
+        ["snakemake", "-c1", "-f", "intersection"],
         check=True,
         capture_output=True
     )

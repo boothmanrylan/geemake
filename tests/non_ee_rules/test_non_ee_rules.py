@@ -20,7 +20,7 @@ def change_dir(request, monkeypatch):
 
 
 def test_run_creates_files():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     assert (
         os.path.isfile("input.csv") and
@@ -30,7 +30,7 @@ def test_run_creates_files():
 
 
 def test_run_creates_proper_input_csv():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     input_df = pd.read_csv("input.csv")
     target_df = pd.DataFrame({'A': np.arange(100)})
@@ -39,7 +39,7 @@ def test_run_creates_proper_input_csv():
 
 
 def test_run_creates_proper_intermediate_csv():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     intermediate_df = pd.read_csv("intermediate.csv")
     target_df = pd.DataFrame({'A': np.arange(100)})
@@ -49,7 +49,7 @@ def test_run_creates_proper_intermediate_csv():
 
 
 def test_run_creates_proper_output_csv():
-    subprocess.run(["geemake"], check=True, capture_output=True)
+    subprocess.run(["snakemake", "-c1"], check=True, capture_output=True)
 
     output_df = pd.read_csv("output.csv")
     target_df = pd.DataFrame({'A': np.arange(100)})
@@ -57,7 +57,3 @@ def test_run_creates_proper_output_csv():
     target_df['output'] = target_df['A'] + target_df['B']
 
     assert (output_df == target_df).all().all()
-
-
-
-

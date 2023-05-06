@@ -22,6 +22,18 @@ def epoch_time(timestamp):
     return epoch_time
 
 
+def get_update_time(asset):
+    """ Returns the update time of an EE asset in epoch time.
+
+    Args:
+        asset: string, path to an earth engine asset.
+
+    Returns:
+        float: the update time of the asset in epoch time.
+    """
+    return epoch_time(ee.data.getAsset(asset)['updateTime'])
+
+
 def write_update_time(asset, local):
     """ Writes the path and update time of the ee asset to local file.
 
@@ -35,7 +47,7 @@ def write_update_time(asset, local):
         None
     """
     try:
-        update_time = epoch_time(ee.data.getAsset(asset)['updateTime'])
+        update_time = get_update_time(asset)
     except ee.EEException:
         return
 
@@ -55,14 +67,11 @@ def check_update_time(local):
         asset:, str, path to the corresponding ee asset if local needs to be
         updated or None if the updateTime of the local file matches the asset
     """
-    try:
-        with open(local, 'r') as f:
-            lines = f.readlines()
-            asset = lines[0].strip()
-            local_update_time = lines[1].strip()
-            true_update_time = epoch_time(ee.data.getAsset(asset)['updateTime'])
+    with open(local, 'r') as f:
+        lines = f.readlines()
+        asset = lines[0].strip()
+        local_update_time = lines[1].strip()
+        true_update_time = get_update_time(asset)
 
-            if local_update_time != true_update_time:
-                return asset
-    except FileNotFoundError:
-        pass
+        if local_update_time != true_update_time:
+            return asset
