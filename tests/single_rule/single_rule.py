@@ -1,12 +1,8 @@
 import ee
-import geemap
-from geemake import geemake
 
-geemap.ee_initialize()
 
-@geemake.geemake(wait=0)
-def create_tasks(ee_input, ee_output, local_output):
-    ee_input_asset = ee.FeatureCollection(ee_input)
+def create_tasks(inputs, outputs):
+    ee_input_asset = ee.FeatureCollection(inputs[0])
     yellowknife = ee.FeatureCollection([ee.Feature(
         ee.Geometry.Point(-114.38, 62.45),
         {'name': 'yellowknife', 'province': 'nwt'}
@@ -16,12 +12,7 @@ def create_tasks(ee_input, ee_output, local_output):
     task = ee.batch.Export.table.toAsset(
         collection=ee_output_asset,
         description='test_single_rule_geemake',
-        assetId=ee_output
+        assetId=outputs[0]
     )
 
-    return [(ee_output, local_output, task)]
-
-
-if __name__ == "__main__":
-    create_tasks()
-
+    return [(outputs[0], task)]

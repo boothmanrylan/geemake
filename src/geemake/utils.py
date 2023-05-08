@@ -46,11 +46,7 @@ def write_update_time(asset, local):
     Returns:
         None
     """
-    try:
-        update_time = get_update_time(asset)
-    except ee.EEException:
-        return
-
+    update_time = get_update_time(asset)
     with open(local, 'w') as f:
         f.write(asset)
         f.write('\n')
@@ -70,7 +66,7 @@ def check_update_time(local):
     with open(local, 'r') as f:
         lines = f.readlines()
         asset = lines[0].strip()
-        local_update_time = lines[1].strip()
+        local_update_time = float(lines[1].strip())
         true_update_time = get_update_time(asset)
 
         if local_update_time != true_update_time:

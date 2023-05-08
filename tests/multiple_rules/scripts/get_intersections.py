@@ -1,8 +1,4 @@
 import ee
-import geemap
-from geemake import geemake
-
-geemap.ee_initialize()
 
 
 def get_intersection(feat, col):
@@ -11,9 +7,8 @@ def get_intersection(feat, col):
     return ee.Feature(intersection.geometry()).copyProperties(feat)
 
 
-@geemake.geemake(wait=0)
-def create_tasks(ee_input, ee_output, local_output):
-    ee_input_asset = ee.FeatureCollection(ee_input)
+def create_tasks(inputs, outputs):
+    ee_input_asset = ee.FeatureCollection(inputs[0])
     ee_output_asset = ee_input_asset.map(
         lambda x: get_intersection(x, ee_input_asset)
     )
@@ -21,12 +16,7 @@ def create_tasks(ee_input, ee_output, local_output):
     task = ee.batch.Export.table.toAsset(
         collection=ee_output_asset,
         description='test_final_rule_geemake',
-        assetId=ee_output
+        assetId=outputs[0]
     )
 
-    return [(ee_output, local_output, task)]
-
-
-if __name__ == "__main__":
-    create_tasks()
-
+    return [(outputs[0], task)]

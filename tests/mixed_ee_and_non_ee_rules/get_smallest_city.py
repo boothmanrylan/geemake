@@ -1,17 +1,13 @@
 import ee
 
 
-def buffer_out(feat):
-    return feat.buffer(200000)
-
-
 def create_tasks(inputs, outputs):
     ee_input_asset = ee.FeatureCollection(inputs[0])
-    ee_output_asset = ee_input_asset.map(buffer_out)
+    ee_output_asset = ee_input_asset.limit(1, 'population')
 
     task = ee.batch.Export.table.toAsset(
         collection=ee_output_asset,
-        description='test_intermediate_rule_geemake',
+        description='test_pure_ee_rule',
         assetId=outputs[0]
     )
 

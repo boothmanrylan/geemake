@@ -8,6 +8,7 @@ rule intersection:
     output: ".local/intersecting-city-regions"
     params:
         script="scripts/get_intersections.py",
+        wait=0,
     wrapper:
         "file:../../geemake/"
 
@@ -16,6 +17,7 @@ rule subset_cities:
     output: ".local/canadian-cities-subset"
     params:
         script="scripts/split_cities.py",
+        wait=0,
     wrapper:
         "file:../../geemake/"
 
@@ -24,6 +26,7 @@ rule buffer_cities:
     output: ".local/buffered-cities"
     params:
         script="scripts/buffer_cities.py",
+        wait=0,
     wrapper:
         "file:../../geemake/"
 

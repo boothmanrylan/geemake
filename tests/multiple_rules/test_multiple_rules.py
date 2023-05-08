@@ -10,7 +10,6 @@ import geemap
 
 geemap.ee_initialize()
 
-from geemake import geemake
 from geemake import utils
 
 EE_PREFIX = 'users/boothmanrylan/geemake-tests/'
@@ -40,9 +39,7 @@ def read_update_times(file):
         lines = f.readlines()
         asset = lines[0].strip()
         local_update_time = float(lines[1].strip())
-        true_update_time = utils.epoch_time(
-            ee.data.getAsset(asset)['updateTime']
-        )
+        true_update_time = utils.get_update_time(asset)
         return {'local': local_update_time, 'remote': true_update_time}
 
 

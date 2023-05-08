@@ -1,0 +1,42 @@
+import numpy as np
+import pandas as pd
+
+configfile: "config.yaml"
+
+rule all:
+    input: ".local/smallest-city"
+
+rule ee_rule:
+    input: ".local/canadian-cities-w-pop"
+    output: ".local/smallest-city"
+    params:
+        script="get_smallest_city.py",
+        wait=0
+    wrapper:
+        "file:../../geemake/"
+
+rule mixed_rule:
+    input: data="census.csv", asset=".local/canadian-cities"
+    output: ".local/canadian-cities-w-pop"
+    params:
+        script="add_census_info.py",
+        wait=0
+    wrapper:
+        "file:../../geemake/"
+
+rule non_ee_rule:
+    input: []
+    output: "census.csv"
+    run:
+        df = pd.DataFrame({
+            'name': ['victoria', 'vancouver', 'calgary', 'edmonton',
+                     'regina', 'winnipeg', 'toronto', 'hamilton',
+                     'ottawa', 'montreal', 'quebec', 'halifax', 'stjohns'],
+            'population': [363222, 2426160, 1305550, 1151635, 224996,
+                           758515, 5647656, 729560, 1068821, 3675219,
+                           733156, 348634, 185565]
+        })
+        df.to_csv(output[0], index=False)
+
+from geemake import geemake
+geemake.initialize(list(workflow.rules), config)

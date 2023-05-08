@@ -5,6 +5,7 @@ rule all:
     output: ".local/output"
     params:
         script="single_rule.py",
+        wait=0,
     wrapper:
         "file:../../geemake/"
 
